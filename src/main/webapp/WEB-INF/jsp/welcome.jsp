@@ -3,6 +3,6 @@
     <title>First web app</title>
 </head>
 <body>
-Welcome! ${name}, your password is: ${password}
+Welcome! ${name}! Please click <a href="/list-todos">here</a> to manage your todos
 </body>
 </html>
