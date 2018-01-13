@@ -1,5 +1,6 @@
 package com.christos.springtodo.web.controllers;
 
+import com.christos.springtodo.web.model.Todo;
 import com.christos.springtodo.web.service.LoginService;
 import com.christos.springtodo.web.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +30,24 @@ public class TodoController {
 
     //////// GET METHOD
     @RequestMapping(value = "/add-todo", method = RequestMethod.GET)
-    public String todo(ModelMap model){
-
+    public String showAtTodoPage(ModelMap model){
+        model.addAttribute(
+                // Here we create the command bean we're going to send to the model.
+                // We set the default values here, to be replaced.
+                "todo",
+                new Todo(
+                        0,
+                        /*name */(String) model.get("name"),
+                        "",
+                        /*Target Date*/new Date(),
+                        false));
         return "todo";
     }
 
     //////// GET METHOD
     @RequestMapping(value = "/add-todo", method = RequestMethod.POST)
-    public String showAddTodo(ModelMap model, @RequestParam String desc){
-        todoService.addTodo((String) model.get("name"),desc, new Date(),false);
+    public String showAddTodo(ModelMap model, Todo todo){
+        todoService.addTodo((String) model.get("name"),todo.getDesc(), new Date(),false);
 
         return "redirect:/list-todos";
     }

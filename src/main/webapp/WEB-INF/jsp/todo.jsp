@@ -1,3 +1,4 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <html>
 <head>
     <title>First web app</title>
@@ -6,13 +7,13 @@
 </head>
 <body>
 <div class="container">
-    <form method="post">
+    <form:form method="post" commandName="todo">
         <fieldset class="form-group">
-            <label>Description</label>
-            <input name="desc" class="form-control" required="required" type="text"/>
+            <form:label path="desc">Description</form:label>
+            <form:input path="desc" class="form-control" required="required" type="text"/>
         </fieldset>
         <button type= "submit" class="btn btn-success">Add Todo</button>
-    </form>
+    </form:form>
     <script src="webjars/jquery/1.9.1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </div>

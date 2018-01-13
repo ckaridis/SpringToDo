@@ -9,6 +9,11 @@ public class Todo {
     private Date targetDate;
     private boolean isDone;
 
+    //This is a default constructor needed for the command bean to work
+    public Todo(){
+        super();
+    }
+
     public Todo(int id, String user, String desc, Date targetDate,
                 boolean isDone) {
         super();
