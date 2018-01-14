@@ -4,17 +4,23 @@ import com.christos.springtodo.web.model.Todo;
 import com.christos.springtodo.web.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @org.springframework.stereotype.Controller
-@SessionAttributes("name")
+//We don't need this anymore. Spring Security stores the Username
+//@SessionAttributes("name")
 public class TodoController {
 
     @Autowired
@@ -29,11 +35,28 @@ public class TodoController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
+    /*
+        ////////////// Refactored method for lower coupling
+        private String getLoggedInUserName(ModelMap model) {
+            return (String) model.get("name");
+        }
+      }
+    */
+    // New method using Spring Security. More info on how this works can be found
+    // on the same method in LoginController
+    private String getLoggedInUserName(ModelMap model) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        return principal.toString();
+    }
+
 
     //////// GET METHOD
     @RequestMapping(value = "/list-todos", method = RequestMethod.GET)
     public String showTodoList(ModelMap model) {
-        String name = (String) model.get("name");
+        String name = getLoggedInUserName(model);
         model.put("todos", todoService.retrieveTodos(name));
         return "list-todos";
     }
@@ -47,7 +70,7 @@ public class TodoController {
                 "todo",
                 new Todo(
                         0,
-                        /*name */(String) model.get("name"),
+                        /*name */getLoggedInUserName(model),
                         "Default Description",
                         /*Target Date*/new Date(),
                         false));
@@ -63,7 +86,7 @@ public class TodoController {
             return "todo";
         }
 
-        todoService.addTodo((String) model.get("name"), todo.getDesc(), todo.getTargetDate(), false);
+        todoService.addTodo(getLoggedInUserName(model), todo.getDesc(), todo.getTargetDate(), false);
 
         return "redirect:/list-todos";
     }
@@ -92,7 +115,7 @@ public class TodoController {
             return "todo";
         }
 
-        todo.setUser((String) model.get("name"));
+        todo.setUser(getLoggedInUserName(model));
         todoService.updateTodo(todo);
 
         return "redirect:/list-todos";
