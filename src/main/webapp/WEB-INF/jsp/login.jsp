@@ -1,15 +1,17 @@
-<html>
-<head>
-    <title>First web app</title>
-</head>
-<body>
-${message}
-<form method="post">
-    name: <input type="text" name = "name" />
-    password: <input type="password" name = "password" />
-    <input type="submit"/>
-</form>
+<%@include file="common/header.jspf" %>
+<%@include file="common/navigation.jspf" %>
 
-My First JSP! ${name} !
-</body>
-</html>
+<div class="container">
+
+    ${message}
+    <form method="post">
+        name: <input type="text" name="name"/>
+        password: <input type="password" name="password"/>
+        <input type="submit"/>
+    </form>
+
+    My First JSP! ${name} !
+
+</div>
+
+<%@include file="common/footer.jspf" %>

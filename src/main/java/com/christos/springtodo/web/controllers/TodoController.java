@@ -3,14 +3,14 @@ package com.christos.springtodo.web.controllers;
 import com.christos.springtodo.web.model.Todo;
 import com.christos.springtodo.web.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @org.springframework.stereotype.Controller
@@ -19,6 +19,15 @@ public class TodoController {
 
     @Autowired
     TodoService todoService;
+
+    //We use initBinder to transform the format of the Date.
+    //The application responds automatically, we don't need to make any further changes.
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        //Date - dd/MM/yyyy
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+    }
 
 
     //////// GET METHOD
@@ -54,7 +63,7 @@ public class TodoController {
             return "todo";
         }
 
-        todoService.addTodo((String) model.get("name"), todo.getDesc(), new Date(), false);
+        todoService.addTodo((String) model.get("name"), todo.getDesc(), todo.getTargetDate(), false);
 
         return "redirect:/list-todos";
     }

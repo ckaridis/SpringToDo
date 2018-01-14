@@ -17,9 +17,15 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
+    //////// GET METHOD for home to redirect to login
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String login() {
+        return "redirect:/login";
+    }
+
     //////// GET METHOD
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(ModelMap model){
+    public String login(ModelMap model) {
 
         return "login";
     }

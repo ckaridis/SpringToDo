@@ -1,12 +1,8 @@
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<html>
-<head>
-    <title>First web app</title>
-    <link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body>
+<%@include file="common/header.jspf" %>
+<%@include file="common/navigation.jspf" %>
+
 <div class="container">
+
     <form:form method="post" commandName="todo">
         <form:hidden path="id"/>
         <fieldset class="form-group">
@@ -14,10 +10,16 @@
             <form:input path="desc" class="form-control" required="required" type="text"/>
             <form:errors path="desc" cssClass="text-warning"></form:errors>
         </fieldset>
-        <button type= "submit" class="btn btn-success">Add Todo</button>
+
+        <fieldset class="form-group">
+            <form:label path="targetDate">Target Date</form:label>
+            <form:input path="targetDate" class="form-control" required="required" type="text"/>
+            <form:errors path="targetDate" cssClass="text-warning"></form:errors>
+        </fieldset>
+
+        <button type="submit" class="btn btn-success">Add Todo</button>
     </form:form>
-    <script src="webjars/jquery/1.9.1/jquery.min.js"></script>
-    <script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
 </div>
-</body>
-</html>
+
+<%@include file="common/footer.jspf" %>
