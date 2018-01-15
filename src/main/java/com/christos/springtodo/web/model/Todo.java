@@ -1,12 +1,16 @@
 package com.christos.springtodo.web.model;
 
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+@Entity
+@Table(name = "todo")
 public class Todo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String user;
-
     @Size(min = 10, message = "Enter at least 10 characters")
     private String desc;
     private Date targetDate;

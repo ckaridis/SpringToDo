@@ -35,6 +35,10 @@
 		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
@@ -74,7 +78,19 @@
 			<artifactId>jquery</artifactId>
 			<version>1.9.1</version>
 		</dependency>
-	</dependencies>
+        <!--H2 - Scope Runtime to be available only on runtime. We don't have access before runtime-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--        <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </dependency>-->
+
+    </dependencies>
 
 	<build>
 		<plugins>

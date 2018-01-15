@@ -1,11 +1,12 @@
 package com.christos.springtodo.web.controllers;
 
 import com.christos.springtodo.web.model.Todo;
-import com.christos.springtodo.web.service.TodoService;
+import com.christos.springtodo.web.service.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,13 +19,21 @@ import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@org.springframework.stereotype.Controller
+//import com.christos.springtodo.web.service.TodoService;
+
+@Controller
 //We don't need this anymore. Spring Security stores the Username
 //@SessionAttributes("name")
 public class TodoController {
 
+/*  // This was replaced by the repository.
+
     @Autowired
     TodoService todoService;
+*/
+
+    @Autowired
+    TodoRepository repository;
 
     //We use initBinder to transform the format of the Date.
     //The application responds automatically, we don't need to make any further changes.
@@ -57,7 +66,8 @@ public class TodoController {
     @RequestMapping(value = "/list-todos", method = RequestMethod.GET)
     public String showTodoList(ModelMap model) {
         String name = getLoggedInUserName(model);
-        model.put("todos", todoService.retrieveTodos(name));
+        model.put("todos", repository.findByUser(name));
+        //model.put("todos", todoService.retrieveTodos(name));
         return "list-todos";
     }
 
@@ -81,12 +91,20 @@ public class TodoController {
     @RequestMapping(value = "/add-todo", method = RequestMethod.POST)
     //@Valid enables the validation specified in our model
     //BindResult returns any errors that might occur during the validation process.
-    public String showAddTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
+    public String addTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
         if (result.hasErrors()) {
             return "todo";
         }
 
-        todoService.addTodo(getLoggedInUserName(model), todo.getDesc(), todo.getTargetDate(), false);
+        // New methods to support JPA. The older above can be deleted.
+        // We first set the user because it's the only info not provided in the ToDo.
+        todo.setUser(getLoggedInUserName(model));
+        repository.save(todo);
+
+/*
+        todoService.addTodo(getLoggedInUserName(model),
+                todo.getDesc(), todo.getTargetDate(), false);
+*/
 
         return "redirect:/list-todos";
     }
@@ -94,7 +112,8 @@ public class TodoController {
     //////// GET METHOD to delete To-do
     @RequestMapping(value = "/delete-todo", method = RequestMethod.GET)
     public String deleteTodo(@RequestParam int id) {
-        todoService.deleteTodo(id);
+        repository.delete(id);
+        //todoService.deleteTodo(id);
         return "redirect:/list-todos";
     }
 
@@ -102,7 +121,8 @@ public class TodoController {
     @RequestMapping(value = "/update-todo", method = RequestMethod.GET)
     public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
         //We're now populating the current to-do and we return the appropriate page.
-        Todo todo = todoService.retrieveTodo(id);
+        Todo todo = repository.findOne(id);
+        //Todo todo = todoService.retrieveTodo(id);
         model.put("todo", todo);
         return "todo";
     }
@@ -116,7 +136,9 @@ public class TodoController {
         }
 
         todo.setUser(getLoggedInUserName(model));
-        todoService.updateTodo(todo);
+
+        repository.save(todo);
+        //todoService.updateTodo(todo);
 
         return "redirect:/list-todos";
     }

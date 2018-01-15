@@ -24,12 +24,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.
                 authorizeRequests()
-                .antMatchers("/login")
+                .antMatchers("/login", "/h2/**")
                 .permitAll()
                 .antMatchers("/", "/*todo*/**")
                 .access("hasRole('USER')")
                 .and()
                 .formLogin();
+
+        // Disabled for H2 database to work
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+
     }
 
 }
